@@ -31,15 +31,23 @@ async function main() {
 
   io.on('connection', async (socket) => {
     io.emit('chat message', '상대방과 연결되었습니다.');
-    socket.on('chat message', async (msg) => {
+    socket.on('chat message', async (msg, clientOffset, callback) => {
       let result: any;
       try {
-        result = await db.run('INSERT INTO messages (content) VALUES (?)', msg);
+        result = await db.run(
+          'INSERT INTO messages (content, client_offset) VALUES (?, ?)',
+          msg,
+          clientOffset,
+        );
       } catch (e) {
+        if (e.errno === 19) {
+          callback();
+        }
         return;
       }
 
-      io.emit('chat message', msg, result.lastId);
+      io.emit('chat message', msg, result.lastID);
+      callback();
     });
 
     if (!socket.recovered) {
