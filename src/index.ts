@@ -4,8 +4,22 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import cluster from 'cluster';
+import { availableParallelism } from 'os';
+import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
 
 async function main() {
+  if (cluster.isPrimary) {
+    const numCPUs = availableParallelism();
+    for (let i = 0; i < numCPUs; i++) {
+      cluster.fork({
+        PORT: 40000 + i,
+      });
+    }
+    setupPrimary();
+    return;
+  }
+
   const db = await open({
     filename: 'chat.db',
     driver: sqlite3.Database,
@@ -23,6 +37,7 @@ async function main() {
   const server = createServer(app);
   const io = new Server(server, {
     connectionStateRecovery: {},
+    adapter: createAdapter(),
   });
 
   app.get('/', (req: Request, res: Response) => {
@@ -42,6 +57,7 @@ async function main() {
       } catch (e) {
         if (e.errno === 19) {
           callback();
+        } else {
         }
         return;
       }
@@ -63,8 +79,10 @@ async function main() {
     }
   });
 
-  server.listen(30000, () => {
-    console.log(`Server is running at http://localhost:30000`);
+  const port = process.env.PORT;
+
+  server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
   });
 }
 
