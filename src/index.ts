@@ -5,7 +5,9 @@ import { createServer } from 'http';
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  connectionStateRecovery: {},
+});
 
 app.get('/', (req: Request, res: Response) => {
   res.sendFile(join(__dirname, 'static/index.html'));
