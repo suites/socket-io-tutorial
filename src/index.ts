@@ -12,8 +12,9 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 io.on('connection', (socket) => {
+  io.emit('chat message', '상대방과 연결되었습니다.');
   socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
+    io.emit('chat message', msg);
   });
 });
 
