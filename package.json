@@ -1,0 +1,22 @@
+{
+  "name": "socket-io-tutorial",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "author": "yoon.homme <woosiks.io@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.8",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "express": "4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "start": "ts-node index.ts"
+  }
+}
